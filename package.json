@@ -1,0 +1,16 @@
+{
+  "name": "injest",
+  "version": "0.0.0",
+  "description": "Injest is a webserver that focuses on serving photo and video faster.",
+  "main": "index.ts",
+  "repository": "https://github.com/lerichardson/injest.git",
+  "author": "lerichardson <litbelb1@outlook.com>",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "@types/express": "^4.17.13",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/node": "^16.4.12"
+  }
+}
