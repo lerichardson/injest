@@ -30,9 +30,11 @@ app.get('/item/:iid/', (req: express.Request, res: express.Response) => {
 app.post('/upload', (req: express.Request, res: express.Response) => {
     const form = new formidable.IncomingForm();
     form.parse(req, (err, fields, files) => {
-        console.log(fields);
         console.log(files);
         res.send(files);
+        if (err) {
+            res.send(err);
+        }
     });
 });
 app.listen(3000, () => {
