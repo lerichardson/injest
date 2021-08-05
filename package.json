@@ -1,16 +1,16 @@
 {
   "name": "injest",
-  "version": "0.0.0",
-  "type": "module",
+  "version": "1.0.0",
   "description": "Injest is a webserver that focuses on serving photo and video faster.",
   "main": "index.ts",
   "scripts": {
-    "start": "tsc && node --module es2020 index.js"
+    "start": "tsc && node index.js"
   },
   "repository": "https://github.com/lerichardson/injest.git",
   "author": "lerichardson <litbelb1@outlook.com>",
   "license": "GPL-3.0",
   "dependencies": {
+    "@dothq/id": "^1.0.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",

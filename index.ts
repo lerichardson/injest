@@ -7,6 +7,7 @@ import fileUpload from "express-fileupload";
 import morgan from "morgan";
 import _ from "lodash";
 import client from "./src/db.js";
+const { useID } = require("@dothq/id");
 
 const app = express();
 const limiter = rateLimit({
@@ -37,13 +38,13 @@ app.get("/", (req, res) => {
     res.send(`
     <h2>With Node.js <code>"http"</code> module</h2>
     <form action="/upload" enctype="multipart/form-data" method="post">
-      <div>File: <input type="file" name="avatar" multiple="multiple" /></div>
+      <div>File: <input type="file" name="fileItem" multiple="multiple" /></div>
       <input type="submit" value="Upload" />
     </form>
     `);
 });
 app.get('/item/:iid/', (req: express.Request, res: express.Response) => {
-    res.sendFile(req.params.iid, { root: path.dirname + "/uploads" });
+    res.sendFile(req.params.iid, { root: __dirname + "/uploads" });
 });
 app.post('/upload', async (req: express.Request, res: express.Response) => {
     try {
@@ -54,15 +55,16 @@ app.post('/upload', async (req: express.Request, res: express.Response) => {
             });
         } else {
             //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
-            let avatar: any = req.files.avatar;
-            avatar.mv('./uploads/' + avatar.name);
+            let fileUpload: any = req.files.fileItem;
+            let fileName: string = useID() + fileUpload.name;
+            fileUpload.mv('./uploads/' + fileName);
             res.send({
                 status: true,
                 message: 'File is uploaded',
                 data: {
-                    name: avatar.name,
-                    mimetype: avatar.mimetype,
-                    size: avatar.size
+                    name: fileName,
+                    mimetype: fileUpload.mimetype,
+                    size: fileUpload.size
                 }
             });
         }
