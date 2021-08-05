@@ -33,10 +33,10 @@ app.use(cors());
 client.on("ready", () => {
     console.log("DB connection: successful");
 });
-client.on('error', err => {
+client.on('error', (err: string) => {
     console.log('Error ' + err);
 });
-app.get("/", (req, res) => {
+app.get("/", (req: express.Request, res: express.Response) => {
     res.send(`
     <h2>With Node.js <code>"http"</code> module</h2>
     <form action="/upload" enctype="multipart/form-data" method="post">
@@ -70,10 +70,9 @@ app.post('/upload', async (req: express.Request, res: express.Response) => {
                 }
             });
         }
-    } catch (err) {
+    } catch (err: any) {
         res.status(500).send(err);
         console.log(err);
-        
     }
 });
 app.listen(3000, () => {
