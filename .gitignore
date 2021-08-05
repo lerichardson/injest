@@ -119,3 +119,5 @@ dist
 
 # Screw js
 *.js
+# File uploads
+uploads

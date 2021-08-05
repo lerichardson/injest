@@ -1,8 +1,11 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import formidable from "formidable";
 import rateLimit from "express-rate-limit";
+import path from "path";
+import fileUpload from "express-fileupload";
+import morgan from "morgan";
+import _ from "lodash";
 import client from "./src/db.js";
 
 const app = express();
@@ -16,6 +19,12 @@ app.set('trust proxy', 1);
 app.use(limiter);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(express.static('uploads'));
+app.use(fileUpload({
+    createParentPath: true
+}));
+// !! change to morgan("combined") for production !!
+app.use(morgan('dev'));
 app.use(cors());
 // Database connection
 client.on("ready", () => {
@@ -24,18 +33,44 @@ client.on("ready", () => {
 client.on('error', err => {
     console.log('Error ' + err);
 });
-app.get('/item/:iid/', (req: express.Request, res: express.Response) => { 
-    res.send(req.params);
+app.get("/", (req, res) => {
+    res.send(`
+    <h2>With Node.js <code>"http"</code> module</h2>
+    <form action="/upload" enctype="multipart/form-data" method="post">
+      <div>File: <input type="file" name="avatar" multiple="multiple" /></div>
+      <input type="submit" value="Upload" />
+    </form>
+    `);
 });
-app.post('/upload', (req: express.Request, res: express.Response) => {
-    const form = new formidable.IncomingForm();
-    form.parse(req, (err, fields, files) => {
-        console.log(files);
-        res.send(files);
-        if (err) {
-            res.send(err);
+app.get('/item/:iid/', (req: express.Request, res: express.Response) => {
+    res.sendFile(req.params.iid, { root: path.dirname + "/uploads" });
+});
+app.post('/upload', async (req: express.Request, res: express.Response) => {
+    try {
+        if(!req.files) {
+            res.send({
+                status: false,
+                message: 'No file uploaded'
+            });
+        } else {
+            //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
+            let avatar: any = req.files.avatar;
+            avatar.mv('./uploads/' + avatar.name);
+            res.send({
+                status: true,
+                message: 'File is uploaded',
+                data: {
+                    name: avatar.name,
+                    mimetype: avatar.mimetype,
+                    size: avatar.size
+                }
+            });
         }
-    });
+    } catch (err) {
+        res.status(500).send(err);
+        console.log(err);
+        
+    }
 });
 app.listen(3000, () => {
     console.log("Dev server started on port 3000, access at http://localhost:3000");
