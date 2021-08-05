@@ -8,6 +8,7 @@ import morgan from "morgan";
 import _ from "lodash";
 import client from "./src/db.js";
 const { useID } = require("@dothq/id");
+const compression = require('compression')
 
 const app = express();
 const limiter = rateLimit({
@@ -24,6 +25,7 @@ app.use(express.static('uploads'));
 app.use(fileUpload({
     createParentPath: true
 }));
+app.use(compression());
 // !! change to morgan("combined") for production !!
 app.use(morgan('dev'));
 app.use(cors());
